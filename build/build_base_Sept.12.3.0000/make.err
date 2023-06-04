@@ -1,0 +1,1 @@
+specmake: *** No rule to make target `common/bots_main.o', needed by `bots-sparselu'.  Stop.
