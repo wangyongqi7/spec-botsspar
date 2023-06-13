@@ -1,0 +1,1 @@
+mpirun -n 8 -f /home/parallel/mpitest/iplist /home/parallel/122033910188/spec-botsspar/src/botsspar -n 20 -m 100 -t 4 -c
