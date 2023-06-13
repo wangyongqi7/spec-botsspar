@@ -272,10 +272,10 @@ void sparselu_par_call(float **BENCH)
    matrix_size = bots_arg_size * bots_arg_size;
    block_size = bots_arg_size_1 * bots_arg_size_1;
    int ii, jj, kk;
-   printf("client %d 进入并行计算区域\n",myid);
+   // printf("client %d 进入并行计算区域\n",myid);
    scatter_data(BENCH);
    
-   printf("INFO:%d 数据分发完成\n",myid);
+   // printf("INFO:%d 数据分发完成\n",myid);
    fflush(stdout);
    // print_matrix(BENCH);
    bots_message("Computing SparseLU Factorization (%dx%d matrix with %dx%d blocks) ",
@@ -296,57 +296,54 @@ void sparselu_par_call(float **BENCH)
    {
       MPI_Request requests[2 * bots_arg_size];
       LOG("第%d次循环\n",kk);
-      lu0(BENCH[kk * bots_arg_size + kk]);
-      LOG("LU分解结束\n");
-      memcpy(diag, BENCH[kk * bots_arg_size + kk], block_size * sizeof(float));
+      if(myid==get_owner(kk * bots_arg_size + kk)){
+         lu0(BENCH[kk * bots_arg_size + kk]);
+         LOG("LU分解结束\n");
+         memcpy(diag, BENCH[kk * bots_arg_size + kk], block_size * sizeof(float));
+      }
+      
+      
       MPI_Bcast(diag, block_size, MPI_FLOAT, get_owner(kk * bots_arg_size + kk), MPI_COMM_WORLD);
       LOG("kk矩阵广播结束\n");
       // diag存储lu分解后的矩阵
       scatter_row_col(BENCH, row, col, kk);
       LOG("分发行列结束\n");
       LOG("row array:\n");
-      print_array(row);
+      // print_array(row);
       LOG("col array:\n");
-      print_array(col);
+      // print_array(col);
       LOG("myid=%d numprocs=%d\n",myid,numprocs);
-      // 先非阻塞接收不是自己计算的块的广播
-      for(ii=0;ii<bots_arg_size - kk - 1;ii++){
-         if(ii%numprocs!=myid){
-            if (row[ii] != NULL){
-               LOG("row[%d] 广播接收  请求 %p root=%d\n",ii,&requests[ii],ii % numprocs);
-               MPI_Ibcast(row[ii], block_size, MPI_FLOAT, ii % numprocs, MPI_COMM_WORLD, &requests[ii]);
-
-            }
-            if (col[ii] != NULL){
-               LOG("col[%d] 广播接收  请求 %p root= %d\n",ii,&requests[ii+bots_arg_size],ii % numprocs);
-               MPI_Ibcast(col[ii], block_size, MPI_FLOAT, ii % numprocs, MPI_COMM_WORLD, &requests[ii + bots_arg_size]);
-            }               
-         }
-      }
-      MPI_Barrier(MPI_COMM_WORLD);
       // 并行计算fwd bdiv 并且 非阻塞广播计算完成的行列数据
-      for (jj = myid; jj < bots_arg_size - kk - 1; jj += numprocs)
-         if (row[jj] != NULL)
+      for (jj = 0; jj < bots_arg_size - kk - 1; jj++)
+         if (row[jj] != NULL && jj%numprocs==myid)
 #pragma omp task untied firstprivate(jj) shared(BENCH,requests)
          {
             LOG("fwd %d 开始计算\n",jj);
             fwd(diag, row[jj]);
-            MPI_Ibcast(row[jj], block_size, MPI_FLOAT, myid, MPI_COMM_WORLD, &requests[jj]);
-            LOG("row[%d] 广播发送请求 %p root=%d\n",jj,&requests[jj],myid);
          }
 
-      for (ii = myid; ii < bots_arg_size - kk - 1; ii += numprocs)
-         if (col[ii] != NULL)
+      for (ii = 0; ii < bots_arg_size - kk - 1; ii++)
+         if (col[ii] != NULL && ii%numprocs==myid)
 #pragma omp task untied firstprivate(ii) shared(BENCH,requests)
          {
             LOG("bdiv %d 开始计算\n",ii);
             bdiv(diag, col[ii]);
-            MPI_Ibcast(col[ii], block_size, MPI_FLOAT, myid, MPI_COMM_WORLD, &requests[ii + bots_arg_size]);
-            LOG("col[%d] 广播发送请求 %p root=%d\n",ii,&requests[ii + bots_arg_size],myid);
          }
 
 #pragma omp taskwait
       LOG("行列计算结束\n");
+      for(ii=0;ii<bots_arg_size - kk - 1;ii++){
+         if (row[ii] != NULL){
+            LOG("row[%d] 广播接收  请求 %p root=%d\n",ii,&requests[ii],ii % numprocs);
+            MPI_Ibcast(row[ii], block_size, MPI_FLOAT, ii % numprocs, MPI_COMM_WORLD, &requests[ii]);
+
+         }
+         if (col[ii] != NULL){
+            LOG("col[%d] 广播接收  请求 %p root= %d\n",ii,&requests[ii+bots_arg_size],ii % numprocs);
+            MPI_Ibcast(col[ii], block_size, MPI_FLOAT, ii % numprocs, MPI_COMM_WORLD, &requests[ii + bots_arg_size]);
+         }               
+      }
+
       // 等待全部传输完成
       for(ii = 0; ii < bots_arg_size - kk - 1; ii++)
       {
@@ -605,16 +602,34 @@ void gather_data(float **BENCH)
    int ii, jj;
    // 聚合数据
 
+   int matrix_exist_tmp[matrix_size];
    int matrix_exist[matrix_size];
+   if(myid==0){
+      for(ii=0;ii<matrix_size;ii++)
+         matrix_exist[ii] = 0;
+   }
    MPI_Request requests[matrix_size];
 
    for (ii = 0; ii < matrix_size; ii++)
    {
-      if (get_owner(ii * bots_arg_size + ii) == myid)
-         matrix_exist[ii] = BENCH[ii] == NULL ? 0 : 1;
+      if (get_owner(ii) == myid)
+         matrix_exist_tmp[ii] = BENCH[ii] == NULL ? 0 : 1;
+      else{
+         matrix_exist_tmp[ii]=0;
+      }
    }
-   MPI_Reduce(matrix_exist, matrix_exist, matrix_size, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+   
+   // LOG("matrix_exist: \n");
+   //    print_matrix_exist(matrix_exist_tmp);
+   
+   MPI_Reduce(matrix_exist_tmp, matrix_exist, matrix_size, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
+   // if(myid==0){
+   //    LOG("matrix_exist: ");
+   //    print_matrix_exist(matrix_exist);
+   // }
+   
+   
    if (myid != 0)
    {
       // 为分配到当前机器上数据申请内存并接收

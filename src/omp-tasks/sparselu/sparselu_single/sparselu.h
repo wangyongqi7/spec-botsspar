@@ -8,8 +8,8 @@
 #include <unistd.h>
 
 extern int myid, numprocs;
-#define LOG(...) printf("[TRACE] "),printf("client-%d: ",myid) ,printf(__VA_ARGS__), fflush(stdout)
-
+// #define LOG(...) printf("[TRACE] "),printf("client-%d: ",myid) ,printf(__VA_ARGS__), fflush(stdout)
+#define LOG( ... ) 
 int checkmat(float *M, float *N);
 void genmat(float *M[]);
 void print_structure(char *name, float *M[]);
