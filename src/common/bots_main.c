@@ -598,13 +598,13 @@ int main(int argc, char *argv[])
 
 #ifdef KERNEL_CHECK
    /* spec, for call to check routine    if (bots_check_flag) { */
-   bots_result = KERNEL_CHECK;
+      bots_result = KERNEL_CHECK;
 /* spec  }  */
 #endif
 
    BOTS_APP_FINI;
-
    bots_print_results();
    MPI_Finalize();
+   
    return (0);
 }

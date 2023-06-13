@@ -408,8 +408,9 @@ void sparselu_par_call(float **BENCH)
    LOG("开始聚合数据\n");
    gather_data(BENCH);
    LOG("成功聚合数据\n");
-
+   printf("并行计算结束");
    bots_message(" completed!\n");
+   
 }
 
 void scatter_row_col(float **BENCH, float *row[], float *col[], int kk)
