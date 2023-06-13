@@ -22,7 +22,7 @@
  * main function & common behaviour of the benchmark.
  **********************************************************************/
 #include <stdio.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include <stddef.h>
@@ -36,7 +36,7 @@
 #include <mpi.h>
 
 /***********************************************************************
- * BENCHMARK HEADERS 
+ * BENCHMARK HEADERS
  *********************************************************************/
 void bots_initialize();
 void bots_finalize();
@@ -49,7 +49,7 @@ void bots_get_params_specific(int argc, char **argv);
 void bots_set_info();
 
 /***********************************************************************
- * DEFAULT VALUES 
+ * DEFAULT VALUES
  *********************************************************************/
 /* common flags */
 int bots_sequential_flag = FALSE;
@@ -78,7 +78,7 @@ char bots_cutoff[128];
 /* time variables */
 double bots_time_program = 0.0;
 double bots_time_sequential = 0.0;
-int    bots_number_of_tasks = 0;
+int bots_number_of_tasks = 0;
 
 /*
  * Application dependent info
@@ -172,7 +172,7 @@ int bots_arg_repetitions = BOTS_APP_DEF_ARG_REPETITIONS;
 #ifndef BOTS_APP_DESC_ARG_FILE
 #error "Help description for argument file must be specified (#define BOTS_APP_DESC_ARG_FILE)"
 #endif
-char bots_arg_file[255]="";
+char bots_arg_file[255] = "";
 #endif
 
 #ifdef BOTS_APP_USES_ARG_BLOCK
@@ -216,11 +216,11 @@ int bots_app_cutoff_value_2 = BOTS_APP_DEF_ARG_CUTOFF_2;
 #endif
 
 #if defined(MANUAL_CUTOFF) || defined(IF_CUTOFF) || defined(FINAL_CUTOFF)
-int  bots_cutoff_value = BOTS_CUTOFF_DEF_VALUE;
+int bots_cutoff_value = BOTS_CUTOFF_DEF_VALUE;
 #endif
 
 /***********************************************************************
- * print_usage: 
+ * print_usage:
  **********************************************************************/
 void bots_print_usage()
 {
@@ -232,31 +232,29 @@ void bots_print_usage()
    fprintf(stderr, "  -r <value> : Set the number of repetitions (default = 1).\n");
 #endif
 #ifdef BOTS_APP_USES_ARG_SIZE
-   fprintf(stderr, "  -n <size>  : "BOTS_APP_DESC_ARG_SIZE"\n");
+   fprintf(stderr, "  -n <size>  : " BOTS_APP_DESC_ARG_SIZE "\n");
 #endif
 #ifdef BOTS_APP_USES_ARG_SIZE_1
-   fprintf(stderr, "  -m <size>  : "BOTS_APP_DESC_ARG_SIZE_1"\n");
+   fprintf(stderr, "  -m <size>  : " BOTS_APP_DESC_ARG_SIZE_1 "\n");
 #endif
 #ifdef BOTS_APP_USES_ARG_SIZE_2
-   fprintf(stderr, "  -l <size>  : "BOTS_APP_DESC_ARG_SIZE_2"\n");
+   fprintf(stderr, "  -l <size>  : " BOTS_APP_DESC_ARG_SIZE_2 "\n");
 #endif
 #ifdef BOTS_APP_USES_ARG_FILE
-   fprintf(stderr, "  -f <file>  : "BOTS_APP_DESC_ARG_FILE"\n");
+   fprintf(stderr, "  -f <file>  : " BOTS_APP_DESC_ARG_FILE "\n");
 #endif
 #if defined(MANUAL_CUTOFF) || defined(IF_CUTOFF) || defined(FINAL_CUTOFF)
-   fprintf(stderr, "  -x <value> : OpenMP tasks cut-off value (default=%d)\n",BOTS_CUTOFF_DEF_VALUE);
+   fprintf(stderr, "  -x <value> : OpenMP tasks cut-off value (default=%d)\n", BOTS_CUTOFF_DEF_VALUE);
 #endif
 #ifdef BOTS_APP_USES_ARG_CUTOFF
-   fprintf(stderr, "  -y <value> : "BOTS_APP_DESC_ARG_CUTOFF"(default=%d)\n", BOTS_APP_DEF_ARG_CUTOFF);
+   fprintf(stderr, "  -y <value> : " BOTS_APP_DESC_ARG_CUTOFF "(default=%d)\n", BOTS_APP_DEF_ARG_CUTOFF);
 #endif
 #ifdef BOTS_APP_USES_ARG_CUTOFF_1
-   fprintf(stderr, "  -a <value> : "BOTS_APP_DESC_ARG_CUTOFF_1"(default=%d)\n", BOTS_APP_DEF_ARG_CUTOFF_1);
+   fprintf(stderr, "  -a <value> : " BOTS_APP_DESC_ARG_CUTOFF_1 "(default=%d)\n", BOTS_APP_DEF_ARG_CUTOFF_1);
 #endif
 #ifdef BOTS_APP_USES_ARG_CUTOFF_2
-   fprintf(stderr, "  -b <value> : "BOTS_APP_DESC_ARG_CUTOFF_2"(default=%d)\n", BOTS_APP_DEF_ARG_CUTOFF_2);
+   fprintf(stderr, "  -b <value> : " BOTS_APP_DESC_ARG_CUTOFF_2 "(default=%d)\n", BOTS_APP_DEF_ARG_CUTOFF_2);
 #endif
-
-
 
    fprintf(stderr, "\n");
    fprintf(stderr, "  -e <str>   : Include 'str' execution message.\n");
@@ -286,158 +284,210 @@ void bots_print_usage()
    fprintf(stderr, "\n");
 }
 /***********************************************************************
- * bots_get_params_common: 
+ * bots_get_params_common:
  **********************************************************************/
-void
-bots_get_params_common(int argc, char **argv)
+void bots_get_params_common(int argc, char **argv)
 {
    int i;
    strcpy(bots_execname, basename(argv[0]));
    bots_get_date(bots_exec_date);
-   strcpy(bots_exec_message,"");
-   for (i=1; i<argc; i++) 
+   strcpy(bots_exec_message, "");
+   for (i = 1; i < argc; i++)
    {
       if (argv[i][0] == '-')
       {
          switch (argv[i][1])
          {
-	    case 't':
-	       argv[i][1] = '*';
-               i++;
-               if (argc == i) { bots_print_usage(); exit(100); }
-               omp_set_num_threads(atoi(argv[i]));
-               break;
+         case 't':
+            argv[i][1] = '*';
+            i++;
+            if (argc == i)
+            {
+               bots_print_usage();
+               exit(100);
+            }
+            omp_set_num_threads(atoi(argv[i]));
+            break;
 #ifdef BOTS_APP_USES_ARG_CUTOFF_1
-	    case 'a':
-	       argv[i][1] = '*';
-               i++;
-               if (argc == i) { bots_print_usage(); exit(100); }
-               bots_app_cutoff_value_1 = atoi(argv[i]);
-               break;
+         case 'a':
+            argv[i][1] = '*';
+            i++;
+            if (argc == i)
+            {
+               bots_print_usage();
+               exit(100);
+            }
+            bots_app_cutoff_value_1 = atoi(argv[i]);
+            break;
 #endif
 #ifdef BOTS_APP_USES_ARG_CUTOFF_2
-	    case 'b':
-	       argv[i][1] = '*';
-               i++;
-               if (argc == i) { bots_print_usage(); exit(100); }
-               bots_app_cutoff_value_2 = atoi(argv[i]);
-               break;
-#endif
-            case 'c': /* set/unset check mode */
-               argv[i][1] = '*';
-               //i++;
-               //if (argc == i) { bots_print_usage(); exit(100); }
-               //bots_check_flag = atoi(argv[i]);
-               bots_check_flag = TRUE;
-               break;
-            case 'e': /* include execution message */
-               argv[i][1] = '*';
-               i++;
-               if (argc == i) { bots_print_usage(); exit(100); }
-               strcpy(bots_exec_message, argv[i]);
-               break;
-#ifdef BOTS_APP_USES_ARG_FILE
-            case 'f': /* read argument file name */
-               argv[i][1] = '*';
-               i++;
-               if (argc == i) { bots_print_usage(); exit(100); }
-               strcpy(bots_arg_file,argv[i]);
-               break;
-#endif
-            case 'h': /* print usage */
-               argv[i][1] = '*';
+         case 'b':
+            argv[i][1] = '*';
+            i++;
+            if (argc == i)
+            {
                bots_print_usage();
-               exit (100);
+               exit(100);
+            }
+            bots_app_cutoff_value_2 = atoi(argv[i]);
+            break;
+#endif
+         case 'c': /* set/unset check mode */
+            argv[i][1] = '*';
+            // i++;
+            // if (argc == i) { bots_print_usage(); exit(100); }
+            // bots_check_flag = atoi(argv[i]);
+            bots_check_flag = TRUE;
+            break;
+         case 'e': /* include execution message */
+            argv[i][1] = '*';
+            i++;
+            if (argc == i)
+            {
+               bots_print_usage();
+               exit(100);
+            }
+            strcpy(bots_exec_message, argv[i]);
+            break;
+#ifdef BOTS_APP_USES_ARG_FILE
+         case 'f': /* read argument file name */
+            argv[i][1] = '*';
+            i++;
+            if (argc == i)
+            {
+               bots_print_usage();
+               exit(100);
+            }
+            strcpy(bots_arg_file, argv[i]);
+            break;
+#endif
+         case 'h': /* print usage */
+            argv[i][1] = '*';
+            bots_print_usage();
+            exit(100);
 #ifdef BOTS_APP_USES_ARG_SIZE_2
-            case 'l': /* read argument size 2 */
-               argv[i][1] = '*';
-               i++;
-               if (argc == i) { bots_print_usage(); exit(100); }
-               bots_arg_size_2 = atoi(argv[i]);
-               break;
+         case 'l': /* read argument size 2 */
+            argv[i][1] = '*';
+            i++;
+            if (argc == i)
+            {
+               bots_print_usage();
+               exit(100);
+            }
+            bots_arg_size_2 = atoi(argv[i]);
+            break;
 #endif
 #ifdef BOTS_APP_USES_ARG_SIZE_1
-            case 'm': /* read argument size 1 */
-               argv[i][1] = '*';
-               i++;
-               if (argc == i) { bots_print_usage(); exit(100); }
-               bots_arg_size_1 = atoi(argv[i]);
-               break;
+         case 'm': /* read argument size 1 */
+            argv[i][1] = '*';
+            i++;
+            if (argc == i)
+            {
+               bots_print_usage();
+               exit(100);
+            }
+            bots_arg_size_1 = atoi(argv[i]);
+            break;
 #endif
 #ifdef BOTS_APP_USES_ARG_SIZE
-            case 'n': /* read argument size 0 */
-               argv[i][1] = '*';
-               i++;
-               if (argc == i) { bots_print_usage(); exit(100); }
-               bots_arg_size = atoi(argv[i]);
-               break;
+         case 'n': /* read argument size 0 */
+            argv[i][1] = '*';
+            i++;
+            if (argc == i)
+            {
+               bots_print_usage();
+               exit(100);
+            }
+            bots_arg_size = atoi(argv[i]);
+            break;
 #endif
 #ifdef BOTS_APP_USES_ARG_BLOCK
 /*TODO*/
 #endif
-            case 'o': /* set output mode */
-               argv[i][1] = '*';
-               i++;
-               if (argc == i) { bots_print_usage(); exit(100); }
-               bots_output_format = atoi(argv[i]);
-               break;
+         case 'o': /* set output mode */
+            argv[i][1] = '*';
+            i++;
+            if (argc == i)
+            {
+               bots_print_usage();
+               exit(100);
+            }
+            bots_output_format = atoi(argv[i]);
+            break;
 #ifdef BOTS_APP_USES_REPETITIONS
-            case 'r': /* set number of repetitions */
-               argv[i][1] = '*';
-               i++;
-               if (argc == i) { bots_print_usage(); exit(100); }
-               bots_arg_repetition = atoi(argv[i]);
-               break;
+         case 'r': /* set number of repetitions */
+            argv[i][1] = '*';
+            i++;
+            if (argc == i)
+            {
+               bots_print_usage();
+               exit(100);
+            }
+            bots_arg_repetition = atoi(argv[i]);
+            break;
 #endif
 #ifdef KERNEL_SEQ_CALL
-            case 's': /* set sequential execution */
-               argv[i][1] = '*';
-               //i++;
-               //if (argc == i) { bots_print_usage(); exit(100); }
-               //bots_sequential_flag = atoi(argv[i]);
-               bots_sequential_flag = TRUE;
-               break;
+         case 's': /* set sequential execution */
+            argv[i][1] = '*';
+            // i++;
+            // if (argc == i) { bots_print_usage(); exit(100); }
+            // bots_sequential_flag = atoi(argv[i]);
+            bots_sequential_flag = TRUE;
+            break;
 #endif
-            case 'v': /* set/unset verbose level */
-               argv[i][1] = '*';
-               i++;
-               if (argc == i) { bots_print_usage(); exit(100); }
-               bots_verbose_mode = (bots_verbose_mode_t) atoi(argv[i]);
+         case 'v': /* set/unset verbose level */
+            argv[i][1] = '*';
+            i++;
+            if (argc == i)
+            {
+               bots_print_usage();
+               exit(100);
+            }
+            bots_verbose_mode = (bots_verbose_mode_t)atoi(argv[i]);
 #ifndef BOTS_DEBUG
-               if ( bots_verbose_mode > 1 ) {
-                  fprintf(stderr, "Error: Configure the suite using '--debug' option in order to use a verbose level greather than 1.\n");
-                  exit(100);
-               }
+            if (bots_verbose_mode > 1)
+            {
+               fprintf(stderr, "Error: Configure the suite using '--debug' option in order to use a verbose level greather than 1.\n");
+               exit(100);
+            }
 #endif
-               break;
+            break;
 #if defined(MANUAL_CUTOFF) || defined(IF_CUTOFF) || defined(FINAL_CUTOFF)
-	    case 'x':
-	       argv[i][1] = '*';
-               i++;
-               if (argc == i) { bots_print_usage(); exit(100); }
-               bots_cutoff_value = atoi(argv[i]);
-               break;
+         case 'x':
+            argv[i][1] = '*';
+            i++;
+            if (argc == i)
+            {
+               bots_print_usage();
+               exit(100);
+            }
+            bots_cutoff_value = atoi(argv[i]);
+            break;
 #endif
 #ifdef BOTS_APP_USES_ARG_CUTOFF
-	    case 'y':
-	       argv[i][1] = '*';
-               i++;
-               if (argc == i) { bots_print_usage(); exit(100); }
-               bots_app_cutoff_value = atoi(argv[i]);
-               break;
-#endif
-	    case 'z':
-	       argv[i][1] = '*';
-               bots_print_header = TRUE;
-               break;
-            default:
-               // As at the moment there are only common paramenters
-               // we launch an error. Otherwise we have to ignore the
-               // parameter and to check, after specific parameters are
-               // completely read, if there are unrecognized parameters.
-               fprintf(stderr, "Error: Unrecognized parameter.\n");
+         case 'y':
+            argv[i][1] = '*';
+            i++;
+            if (argc == i)
+            {
                bots_print_usage();
-               exit (100);
+               exit(100);
+            }
+            bots_app_cutoff_value = atoi(argv[i]);
+            break;
+#endif
+         case 'z':
+            argv[i][1] = '*';
+            bots_print_header = TRUE;
+            break;
+         default:
+            // As at the moment there are only common paramenters
+            // we launch an error. Otherwise we have to ignore the
+            // parameter and to check, after specific parameters are
+            // completely read, if there are unrecognized parameters.
+            fprintf(stderr, "Error: Unrecognized parameter.\n");
+            bots_print_usage();
+            exit(100);
          }
       }
       else
@@ -448,67 +498,64 @@ bots_get_params_common(int argc, char **argv)
          // completely read, if there are unrecognized parameters.
          fprintf(stderr, "Error: Unrecognized parameter.\n");
          bots_print_usage();
-         exit (100);
+         exit(100);
       }
    }
 }
 /***********************************************************************
- * bots_get_params_common: 
+ * bots_get_params_common:
  **********************************************************************/
-void
-bots_get_params(int argc, char **argv)
+void bots_get_params(int argc, char **argv)
 {
    bots_get_params_common(argc, argv);
-//   bots_get_params_specific(argc, argv);
+   //   bots_get_params_specific(argc, argv);
 }
 
-
 /***********************************************************************
- * bots_set_info 
+ * bots_set_info
  **********************************************************************/
-void bots_set_info ()
+void bots_set_info()
 {
    /* program specific info */
-   sprintf(bots_name,BOTS_APP_NAME);
-   sprintf(bots_parameters,BOTS_APP_PARAMETERS_DESC BOTS_APP_PARAMETERS_LIST);
-   sprintf(bots_model,BOTS_MODEL_DESC);
-   sprintf(bots_resources,"%d", omp_get_max_threads());
+   sprintf(bots_name, BOTS_APP_NAME);
+   sprintf(bots_parameters, BOTS_APP_PARAMETERS_DESC BOTS_APP_PARAMETERS_LIST);
+   sprintf(bots_model, BOTS_MODEL_DESC);
+   sprintf(bots_resources, "%d", omp_get_max_threads());
 
    /* compilation info (do not modify) */
-   strcpy(bots_comp_date,CDATE);
-   strcpy(bots_comp_message,CMESSAGE);
-   strcpy(bots_cc,CC);
-   strcpy(bots_cflags,CFLAGS);
-   strcpy(bots_ld,LD);
-   strcpy(bots_ldflags,LDFLAGS);
+   strcpy(bots_comp_date, CDATE);
+   strcpy(bots_comp_message, CMESSAGE);
+   strcpy(bots_cc, CC);
+   strcpy(bots_cflags, CFLAGS);
+   strcpy(bots_ld, LD);
+   strcpy(bots_ldflags, LDFLAGS);
 
-#if defined(MANUAL_CUTOFF) 
-   sprintf(bots_cutoff,"manual (%d)",bots_cutoff_value);
-#elif defined(IF_CUTOFF) 
-   sprintf(bots_cutoff,"pragma-if (%d)",bots_cutoff_value);
+#if defined(MANUAL_CUTOFF)
+   sprintf(bots_cutoff, "manual (%d)", bots_cutoff_value);
+#elif defined(IF_CUTOFF)
+   sprintf(bots_cutoff, "pragma-if (%d)", bots_cutoff_value);
 #elif defined(FINAL_CUTOFF)
-   sprintf(bots_cutoff,"final (%d)",bots_cutoff_value);
+   sprintf(bots_cutoff, "final (%d)", bots_cutoff_value);
 #else
-   strcpy(bots_cutoff,"none");
+   strcpy(bots_cutoff, "none");
 #endif
 }
 
 /***********************************************************************
- * main: 
+ * main:
  **********************************************************************/
-int myid,numprocs;
-int
-main(int argc, char* argv[])
+int myid, numprocs;
+int main(int argc, char *argv[])
 {
-   MPI_Init(&argc,&argv);
-   MPI_Comm_rank(MPI_COMM_WORLD,&myid);
-   MPI_Comm_size(MPI_COMM_WORLD,&numprocs);
+   MPI_Init(&argc, &argv);
+   MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+   MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
 #ifndef BOTS_APP_SELF_TIMING
    long bots_t_start;
    long bots_t_end;
 #endif
 
-   bots_get_params(argc,argv);
+   bots_get_params(argc, argv);
    BOTS_APP_INIT;
    bots_set_info();
 
@@ -527,32 +574,37 @@ main(int argc, char* argv[])
       bots_t_start = bots_usecs();
       KERNEL_SEQ_CALL;
       bots_t_end = bots_usecs();
-      bots_time_sequential = ((double)(bots_t_end-bots_t_start))/1000000;
+      bots_time_sequential = ((double)(bots_t_end - bots_t_start)) / 1000000;
 #endif
       KERNEL_SEQ_FINI;
    }
 #endif
 
-   KERNEL_INIT;
+   if(myid==0){   
+      KERNEL_INIT;
+   }
+   else{
+      BENCH = (float **)malloc(bots_arg_size * bots_arg_size * sizeof(float *));
+   }
 #ifdef BOTS_APP_SELF_TIMING
    bots_time_program = KERNEL_CALL;
 #else
    bots_t_start = bots_usecs();
    KERNEL_CALL;
    bots_t_end = bots_usecs();
-   bots_time_program = ((double)(bots_t_end-bots_t_start))/1000000;
+   bots_time_program = ((double)(bots_t_end - bots_t_start)) / 1000000;
 #endif
    KERNEL_FINI;
 
 #ifdef KERNEL_CHECK
-/* spec, for call to check routine    if (bots_check_flag) { */
-     bots_result = KERNEL_CHECK;
+   /* spec, for call to check routine    if (bots_check_flag) { */
+   bots_result = KERNEL_CHECK;
 /* spec  }  */
 #endif
 
    BOTS_APP_FINI;
 
    bots_print_results();
+   MPI_Finalize();
    return (0);
 }
-

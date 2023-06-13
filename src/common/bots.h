@@ -47,14 +47,14 @@ extern char bots_ldflags[];
 /* time variables */
 extern double bots_time_program;
 extern double bots_time_sequential;
-extern int    bots_number_of_tasks;
+extern int bots_number_of_tasks;
 
 extern char bots_cutoff[];
-extern int  bots_cutoff_value;
+extern int bots_cutoff_value;
 
-extern int  bots_app_cutoff_value;
-extern int  bots_app_cutoff_value_1;
-extern int  bots_app_cutoff_value_2;
+extern int bots_app_cutoff_value;
+extern int bots_app_cutoff_value_1;
+extern int bots_app_cutoff_value_2;
 
 extern int bots_arg_size;
 extern int bots_arg_size_1;
@@ -70,26 +70,30 @@ void bots_warning(int warning, char *message);
 #define BOTS_RESULT_UNSUCCESSFUL 2
 #define BOTS_RESULT_NOT_REQUESTED 3
 
-
-typedef enum { BOTS_VERBOSE_NONE=0,
-               BOTS_VERBOSE_DEFAULT,
-               BOTS_VERBOSE_DEBUG } bots_verbose_mode_t;
+typedef enum
+{
+   BOTS_VERBOSE_NONE = 0,
+   BOTS_VERBOSE_DEFAULT,
+   BOTS_VERBOSE_DEBUG
+} bots_verbose_mode_t;
 
 extern bots_verbose_mode_t bots_verbose_mode;
 
-#define bots_message(msg, ...) \
-   {\
-      if ( bots_verbose_mode >= BOTS_VERBOSE_DEFAULT ) {\
-        fprintf(stdout, msg , ##__VA_ARGS__);\
-      }\
+#define bots_message(msg, ...)                       \
+   {                                                 \
+      if (bots_verbose_mode >= BOTS_VERBOSE_DEFAULT) \
+      {                                              \
+         fprintf(stdout, msg, ##__VA_ARGS__);        \
+      }                                              \
    }
 
 #ifdef BOTS_DEBUG
-#define bots_debug(msg, ...) \
-   {\
-      if ( bots_verbose_mode >= BOTS_VERBOSE_DEBUG ) {\
-       fprintf(stdout, "%s:%d:%s:" msg ,__FILE__, __LINE__,__func__,##__VA_ARGS__);\
-      }\
+#define bots_debug(msg, ...)                                                            \
+   {                                                                                    \
+      if (bots_verbose_mode >= BOTS_VERBOSE_DEBUG)                                      \
+      {                                                                                 \
+         fprintf(stdout, "%s:%d:%s:" msg, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
+      }                                                                                 \
    }
 #else
 #define bots_debug(msg, ...)
@@ -99,5 +103,3 @@ extern bots_verbose_mode_t bots_verbose_mode;
 #define TRUE 1
 
 #endif
-
-

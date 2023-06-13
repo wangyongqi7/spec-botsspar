@@ -40,11 +40,11 @@
 #define CMESSAGE ""
 #endif
 
-#define BOTS_ERROR                         0
-#define BOTS_ERROR_NOT_ENOUGH_MEMORY       1
-#define BOTS_ERROR_UNRECOGNIZED_PARAMETER  2
+#define BOTS_ERROR 0
+#define BOTS_ERROR_NOT_ENOUGH_MEMORY 1
+#define BOTS_ERROR_UNRECOGNIZED_PARAMETER 2
 
-#define BOTS_WARNING                       0
+#define BOTS_WARNING 0
 
 void bots_get_date(char *str);
 void bots_get_architecture(char *str);

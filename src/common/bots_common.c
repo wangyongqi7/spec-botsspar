@@ -31,59 +31,58 @@
 #include "bots_main.h"
 #include "bots.h"
 
-void
-bots_error(int error, char *message)
+void bots_error(int error, char *message)
 {
    if (message == NULL)
    {
-      switch(error)
+      switch (error)
       {
-         case BOTS_ERROR:
-            fprintf(stderr, "Error (%d): %s\n",error,"Unspecified error.");
-            break;
-         case BOTS_ERROR_NOT_ENOUGH_MEMORY:
-            fprintf(stderr, "Error (%d): %s\n",error,"Not enough memory.");
-            break;
-         case BOTS_ERROR_UNRECOGNIZED_PARAMETER:
-            fprintf(stderr, "Error (%d): %s\n",error,"Unrecognized parameter.");
-            bots_print_usage();
-            break;
-         default:
-            fprintf(stderr, "Error (%d): %s\n",error,"Invalid error code.");
-            break;
+      case BOTS_ERROR:
+         fprintf(stderr, "Error (%d): %s\n", error, "Unspecified error.");
+         break;
+      case BOTS_ERROR_NOT_ENOUGH_MEMORY:
+         fprintf(stderr, "Error (%d): %s\n", error, "Not enough memory.");
+         break;
+      case BOTS_ERROR_UNRECOGNIZED_PARAMETER:
+         fprintf(stderr, "Error (%d): %s\n", error, "Unrecognized parameter.");
+         bots_print_usage();
+         break;
+      default:
+         fprintf(stderr, "Error (%d): %s\n", error, "Invalid error code.");
+         break;
       }
    }
-   else fprintf(stderr, "Error (%d): %s\n",error,message);
-   exit(100+error);
+   else
+      fprintf(stderr, "Error (%d): %s\n", error, message);
+   exit(100 + error);
 }
 
-void
-bots_warning(int warning, char *message)
+void bots_warning(int warning, char *message)
 {
    if (message == NULL)
    {
-      switch(warning)
+      switch (warning)
       {
-         case BOTS_WARNING:
-            fprintf(stderr, "Warning (%d): %s\n",warning,"Unspecified warning.");
-            break;
-         default:
-            fprintf(stderr, "Warning (%d): %s\n",warning,"Invalid warning code.");
-            break;
+      case BOTS_WARNING:
+         fprintf(stderr, "Warning (%d): %s\n", warning, "Unspecified warning.");
+         break;
+      default:
+         fprintf(stderr, "Warning (%d): %s\n", warning, "Invalid warning code.");
+         break;
       }
    }
-   else fprintf(stderr, "Warning (%d): %s\n",warning,message);
+   else
+      fprintf(stderr, "Warning (%d): %s\n", warning, message);
 }
 
-long bots_usecs (void)
+long bots_usecs(void)
 {
    struct timeval t;
-   gettimeofday(&t,NULL);
-   return t.tv_sec*1000000+t.tv_usec;
+   gettimeofday(&t, NULL);
+   return t.tv_sec * 1000000 + t.tv_usec;
 }
 
-void
-bots_get_date(char *str)
+void bots_get_date(char *str)
 {
    time_t now;
    time(&now);
@@ -94,7 +93,7 @@ bots_get_date(char *str)
  * SPEC - do not gather data for linux, return the null strings
  */
 #if 0
-#if defined (__linux)
+#if defined(__linux)
 /* ****************************************************************** */
 void bots_get_architecture(char *str)
 {
@@ -117,9 +116,12 @@ void bots_get_architecture(char *str) { sprintf(str,";"); }
 void bots_get_load_average(char *str) { sprintf(str,";;"); }
 #endif
 #endif
-int bots_get_max_cpus(void) { return 0; }
-void bots_get_architecture(char *str) { sprintf(str,";"); } 
-void bots_get_load_average(char *str) { sprintf(str,";;"); }
+int bots_get_max_cpus(void)
+{
+   return 0;
+}
+void bots_get_architecture(char *str) { sprintf(str, ";"); }
+void bots_get_load_average(char *str) { sprintf(str, ";;"); }
 
 void bots_print_results()
 {
@@ -151,33 +153,36 @@ void bots_print_results()
    sprintf(str_model, "%s", bots_model);
    sprintf(str_cutoff, "%s", bots_cutoff);
    sprintf(str_resources, "%s", bots_resources);
-   switch(bots_result)
+   switch (bots_result)
    {
-      case BOTS_RESULT_NA: 
-         sprintf(str_result, "n/a");
-         break;
-      case BOTS_RESULT_SUCCESSFUL: 
-         sprintf(str_result, "successful");
-         break;
-      case BOTS_RESULT_UNSUCCESSFUL: 
-         sprintf(str_result, "UNSUCCESSFUL");
-         break;
-      case BOTS_RESULT_NOT_REQUESTED:
-         sprintf(str_result, "Not requested");
-         break;
-      default: 
-         sprintf(str_result, "error");
-         break;
+   case BOTS_RESULT_NA:
+      sprintf(str_result, "n/a");
+      break;
+   case BOTS_RESULT_SUCCESSFUL:
+      sprintf(str_result, "successful");
+      break;
+   case BOTS_RESULT_UNSUCCESSFUL:
+      sprintf(str_result, "UNSUCCESSFUL");
+      break;
+   case BOTS_RESULT_NOT_REQUESTED:
+      sprintf(str_result, "Not requested");
+      break;
+   default:
+      sprintf(str_result, "error");
+      break;
    }
    sprintf(str_time_program, "%f", bots_time_program);
-   if (bots_sequential_flag) sprintf(str_time_sequential, "%f", bots_time_sequential);
-   else sprintf(str_time_sequential, "n/a");
    if (bots_sequential_flag)
-   sprintf(str_speed_up, "%3.2f", bots_time_sequential/bots_time_program);
-   else sprintf(str_speed_up, "n/a");
+      sprintf(str_time_sequential, "%f", bots_time_sequential);
+   else
+      sprintf(str_time_sequential, "n/a");
+   if (bots_sequential_flag)
+      sprintf(str_speed_up, "%3.2f", bots_time_sequential / bots_time_program);
+   else
+      sprintf(str_speed_up, "n/a");
 
-   sprintf(str_number_of_tasks, "%3.2f", (float) bots_number_of_tasks);
-   sprintf(str_number_of_tasks_per_second, "%3.2f", (float) bots_number_of_tasks/bots_time_program);
+   sprintf(str_number_of_tasks, "%3.2f", (float)bots_number_of_tasks);
+   sprintf(str_number_of_tasks_per_second, "%3.2f", (float)bots_number_of_tasks / bots_time_program);
 
    sprintf(str_exec_date, "%s", bots_exec_date);
    sprintf(str_exec_message, "%s", bots_exec_message);
@@ -190,163 +195,156 @@ void bots_print_results()
    sprintf(str_ld, "%s", bots_ld);
    sprintf(str_ldflags, "%s", bots_ldflags);
 
-   if(bots_print_header)
+   if (bots_print_header)
    {
-      switch(bots_output_format)
+      switch (bots_output_format)
       {
-         case 0:
-            break;
-         case 1:
-            break;
-         case 2:
-fprintf(stdout,
-"Benchmark;Parameters;Model;Cutoff;Resources;Result;\
+      case 0:
+         break;
+      case 1:
+         break;
+      case 2:
+         fprintf(stdout,
+                 "Benchmark;Parameters;Model;Cutoff;Resources;Result;\
 Time;Sequential;Speed-up;\
 Nodes;Nodes/Sec;\
 Exec Date;Exec Time;Exec Message;\
 Architecture;Processors;Load Avg-1;Load Avg-5;Load Avg-15;\
 Comp Date;Comp Time;Comp Message;CC;CFLAGS;LD;LDFLAGS\n");
-            break;
-         case 3:
-            break;
-         case 4:
-fprintf(stdout,
-"Benchmark;Parameters;Model;Cutoff;Resources;Result;\
+         break;
+      case 3:
+         break;
+      case 4:
+         fprintf(stdout,
+                 "Benchmark;Parameters;Model;Cutoff;Resources;Result;\
 Time;Sequential;Speed-up;\
 Nodes;Nodes/Sec;\n");
-            break;
-         default:
-            break;
+         break;
+      default:
+         break;
       }
    }
 
    /* print results */
-   switch(bots_output_format)
+   switch (bots_output_format)
    {
-      case 0:
-         break;
-      case 1:
-	 fprintf(stdout, "\n");
-         fprintf(stdout, "Program             = %s\n", str_name); /*fix*/
-         fprintf(stdout, "Parameters          = %s\n", str_parameters); /*fix*/
-         fprintf(stdout, "Model               = %s\n", str_model); 
-         fprintf(stdout, "Embedded cut-off    = %s\n", str_cutoff); 
-/* spec removed
-         fprintf(stdout, "# of Threads        = %s\n", str_resources);
-*/
-         fprintf(stdout, "Verification        = %s\n", str_result);
+   case 0:
+      break;
+   case 1:
+      fprintf(stdout, "\n");
+      fprintf(stdout, "Program             = %s\n", str_name);       /*fix*/
+      fprintf(stdout, "Parameters          = %s\n", str_parameters); /*fix*/
+      fprintf(stdout, "Model               = %s\n", str_model);
+      fprintf(stdout, "Embedded cut-off    = %s\n", str_cutoff);
+      /* spec removed
+               fprintf(stdout, "# of Threads        = %s\n", str_resources);
+      */
+      fprintf(stdout, "Verification        = %s\n", str_result);
 
-/* spec removed
-         fprintf(stdout, "Time Program        = %s seconds\n", str_time_program);
-*/
-	 if (bots_sequential_flag) {
-           fprintf(stdout, "Time Sequential     = %s seconds\n", str_time_sequential);
-           fprintf(stdout, "Speed-up            = %s\n", str_speed_up);
-	 }
+      /* spec removed
+               fprintf(stdout, "Time Program        = %s seconds\n", str_time_program);
+      */
+      if (bots_sequential_flag)
+      {
+         fprintf(stdout, "Time Sequential     = %s seconds\n", str_time_sequential);
+         fprintf(stdout, "Speed-up            = %s\n", str_speed_up);
+      }
 
-         if ( bots_number_of_tasks > 0 ) {
-           fprintf(stdout, "Nodes               = %s\n", str_number_of_tasks);
-           fprintf(stdout, "Nodes/Sec           = %s\n", str_number_of_tasks_per_second);
-	 }
+      if (bots_number_of_tasks > 0)
+      {
+         fprintf(stdout, "Nodes               = %s\n", str_number_of_tasks);
+         fprintf(stdout, "Nodes/Sec           = %s\n", str_number_of_tasks_per_second);
+      }
 
-/* spec removed
-         fprintf(stdout, "Execution Date      = %s\n", str_exec_date);
-*/
-         fprintf(stdout, "Execution Message   = %s\n", str_exec_message);
+      /* spec removed
+               fprintf(stdout, "Execution Date      = %s\n", str_exec_date);
+      */
+      fprintf(stdout, "Execution Message   = %s\n", str_exec_message);
 
-         fprintf(stdout, "Architecture        = %s\n", str_architecture);
-         fprintf(stdout, "Load Avg [1:5:15]   = %s\n", str_load_avg);
+      fprintf(stdout, "Architecture        = %s\n", str_architecture);
+      fprintf(stdout, "Load Avg [1:5:15]   = %s\n", str_load_avg);
 
-         fprintf(stdout, "Compilation Date    = %s\n", str_comp_date);
-         fprintf(stdout, "Compilation Message = %s\n", str_comp_message);
+      fprintf(stdout, "Compilation Date    = %s\n", str_comp_date);
+      fprintf(stdout, "Compilation Message = %s\n", str_comp_message);
 
-         fprintf(stdout, "Compiler            = %s\n", str_cc);
-         fprintf(stdout, "Compiler Flags      = %s\n", str_cflags);
-         fprintf(stdout, "Linker              = %s\n", str_ld);
-         fprintf(stdout, "Linker Flags        = %s\n", str_ldflags);
-	 fflush(stdout);
-         break;
-      case 2:
-         fprintf(stdout,"%s;%s;%s;%s;%s;%s;", 
-              str_name, 
-              str_parameters, 
-              str_model, 
-              str_cutoff, 
-              str_resources, 
-              str_result
-         );
-         fprintf(stdout,"%s;%s;%s;", 
-              str_time_program, 
-              str_time_sequential, 
-              str_speed_up 
-         );
-         fprintf(stdout,"%s;%s;", 
-              str_number_of_tasks, 
-              str_number_of_tasks_per_second
-         );
-         fprintf(stdout,"%s;%s;", 
+      fprintf(stdout, "Compiler            = %s\n", str_cc);
+      fprintf(stdout, "Compiler Flags      = %s\n", str_cflags);
+      fprintf(stdout, "Linker              = %s\n", str_ld);
+      fprintf(stdout, "Linker Flags        = %s\n", str_ldflags);
+      fflush(stdout);
+      break;
+   case 2:
+      fprintf(stdout, "%s;%s;%s;%s;%s;%s;",
+              str_name,
+              str_parameters,
+              str_model,
+              str_cutoff,
+              str_resources,
+              str_result);
+      fprintf(stdout, "%s;%s;%s;",
+              str_time_program,
+              str_time_sequential,
+              str_speed_up);
+      fprintf(stdout, "%s;%s;",
+              str_number_of_tasks,
+              str_number_of_tasks_per_second);
+      fprintf(stdout, "%s;%s;",
               str_exec_date,
-              str_exec_message
-         );
-         fprintf(stdout,"%s;%s;", 
+              str_exec_message);
+      fprintf(stdout, "%s;%s;",
               str_architecture,
-              str_load_avg
-         );
-         fprintf(stdout,"%s;%s;", 
+              str_load_avg);
+      fprintf(stdout, "%s;%s;",
               str_comp_date,
-              str_comp_message
-         );
-         fprintf(stdout,"%s;%s;%s;%s;",
+              str_comp_message);
+      fprintf(stdout, "%s;%s;%s;%s;",
               str_cc,
               str_cflags,
               str_ld,
-              str_ldflags
-         );
-         fprintf(stdout,"\n");
-         break;
-      case 3:
-	 fprintf(stdout, "\n");
-         fprintf(stdout, "Program             = %s\n", str_name); /*fix*/
-         fprintf(stdout, "Parameters          = %s\n", str_parameters); /*fix*/
-         fprintf(stdout, "Model               = %s\n", str_model); 
-         fprintf(stdout, "Embedded cut-off    = %s\n", str_cutoff); 
-         fprintf(stdout, "# of Threads        = %s\n", str_resources);
-         fprintf(stdout, "Verification        = %s\n", str_result);
+              str_ldflags);
+      fprintf(stdout, "\n");
+      break;
+   case 3:
+      fprintf(stdout, "\n");
+      fprintf(stdout, "Program             = %s\n", str_name);       /*fix*/
+      fprintf(stdout, "Parameters          = %s\n", str_parameters); /*fix*/
+      fprintf(stdout, "Model               = %s\n", str_model);
+      fprintf(stdout, "Embedded cut-off    = %s\n", str_cutoff);
+      fprintf(stdout, "# of Threads        = %s\n", str_resources);
+      fprintf(stdout, "Verification        = %s\n", str_result);
 
-         fprintf(stdout, "Time Program        = %s seconds\n", str_time_program);
-	 if (bots_sequential_flag) {
-           fprintf(stdout, "Time Sequential     = %s seconds\n", str_time_sequential);
-           fprintf(stdout, "Speed-up            = %s\n", str_speed_up);
-	 }
+      fprintf(stdout, "Time Program        = %s seconds\n", str_time_program);
+      if (bots_sequential_flag)
+      {
+         fprintf(stdout, "Time Sequential     = %s seconds\n", str_time_sequential);
+         fprintf(stdout, "Speed-up            = %s\n", str_speed_up);
+      }
 
-         if ( bots_number_of_tasks > 0 ) {
-           fprintf(stdout, "Nodes               = %s\n", str_number_of_tasks);
-           fprintf(stdout, "Nodes/Sec           = %s\n", str_number_of_tasks_per_second);
-	 }
-         break;
-      case 4:
-         fprintf(stdout,"%s;%s;%s;%s;%s;%s;", 
-              str_name, 
-              str_parameters, 
-              str_model, 
-              str_cutoff, 
-              str_resources, 
-              str_result
-         );
-         fprintf(stdout,"%s;%s;%s;", 
-              str_time_program, 
-              str_time_sequential, 
-              str_speed_up 
-         );
-         fprintf(stdout,"%s;%s;", 
-              str_number_of_tasks, 
-              str_number_of_tasks_per_second
-         );
-         fprintf(stdout,"\n");
-         break;
-      default:
-         bots_error(BOTS_ERROR,"No valid output format\n");
-         break;
+      if (bots_number_of_tasks > 0)
+      {
+         fprintf(stdout, "Nodes               = %s\n", str_number_of_tasks);
+         fprintf(stdout, "Nodes/Sec           = %s\n", str_number_of_tasks_per_second);
+      }
+      break;
+   case 4:
+      fprintf(stdout, "%s;%s;%s;%s;%s;%s;",
+              str_name,
+              str_parameters,
+              str_model,
+              str_cutoff,
+              str_resources,
+              str_result);
+      fprintf(stdout, "%s;%s;%s;",
+              str_time_program,
+              str_time_sequential,
+              str_speed_up);
+      fprintf(stdout, "%s;%s;",
+              str_number_of_tasks,
+              str_number_of_tasks_per_second);
+      fprintf(stdout, "\n");
+      break;
+   default:
+      bots_error(BOTS_ERROR, "No valid output format\n");
+      break;
    }
 }
-
