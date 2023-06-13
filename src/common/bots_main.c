@@ -594,6 +594,10 @@ int main(int argc, char *argv[])
    bots_t_end = bots_usecs();
    bots_time_program = ((double)(bots_t_end - bots_t_start)) / 1000000;
 #endif
+   if(myid!=0){
+      MPI_Finalize();
+      return 0;
+   }
    KERNEL_FINI;
 
 #ifdef KERNEL_CHECK
