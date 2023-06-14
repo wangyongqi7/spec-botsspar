@@ -89,7 +89,7 @@ void genmat(float *M[])
          /* allocating matrix */
          if (null_entry == FALSE)
          {
-            M[ii * bots_arg_size + jj] = (float *)malloc(bots_arg_size_1 * bots_arg_size_1 * sizeof(float));
+            M[ii * bots_arg_size + jj] = allocate_clean_block();
             if ((M[ii * bots_arg_size + jj] == NULL))
             {
                bots_message("Error: Out of memory\n");
@@ -442,7 +442,7 @@ void scatter_row_col(float **BENCH, float *row[], float *col[], int kk)
       {
          if (row_exist[ii] != 0)
          {
-            row[ii] = (float *)malloc(block_size * sizeof(float));
+            row[ii] = allocate_clean_block();
             if (ii % numprocs == myid)
             {
                MPI_Irecv(row[ii], block_size, MPI_FLOAT, get_owner(kk * bots_arg_size + kk), ii, MPI_COMM_WORLD, &requests[ii]);
@@ -452,7 +452,7 @@ void scatter_row_col(float **BENCH, float *row[], float *col[], int kk)
 
          if (col_exist[ii] != 0)
          {
-            col[ii] = (float *)malloc(block_size * sizeof(float));
+            col[ii] = allocate_clean_block();
             if (ii % numprocs == myid)
             {
                MPI_Irecv(col[ii], block_size, MPI_FLOAT, get_owner(kk * bots_arg_size + kk), bots_arg_size + ii, MPI_COMM_WORLD, &requests[bots_arg_size + ii]);
@@ -565,7 +565,7 @@ void scatter_data(float **BENCH)
          if (matrix_exist[ii] && get_owner(ii) == myid)
          {
             if (BENCH[ii] == NULL)
-               BENCH[ii] = (float *)malloc(block_size * sizeof(float));
+               BENCH[ii] = allocate_clean_block();
             MPI_Irecv(BENCH[ii], block_size, MPI_FLOAT, 0, ii, MPI_COMM_WORLD, &requests[ii]);
          }
       }
@@ -653,7 +653,7 @@ void gather_data(float **BENCH)
          if (matrix_exist[ii] != 0 && get_owner(ii) != 0)
          {
             if (BENCH[ii] == NULL)
-               BENCH[ii] = (float *)malloc(block_size * sizeof(float));
+               BENCH[ii] = allocate_clean_block();
             MPI_Irecv(BENCH[ii], block_size, MPI_FLOAT, get_owner(ii), ii, MPI_COMM_WORLD, &requests[ii]);
          }
       }
@@ -732,7 +732,10 @@ int sparselu_check(float **SEQ, float **BENCH)
 int checkmat1(float *N)
 {
    int i, j;
-
+   if(N==NULL ||sizeof(N)/sizeof(float)!=bots_arg_size_1*bots_arg_size_1){
+      printf("client-%d: N equal NULL %d size=%d",myid,N==NULL,sizeof(N)/sizeof(float));
+      return FALSE;
+   }
    for (i = 0; i < bots_arg_size_1; i += 20)
    {
       for (j = 0; j < bots_arg_size_1; j += 20)
@@ -746,13 +749,19 @@ int checkmat1(float *N)
 int sparselu_check(float **SEQ, float **BENCH)
 {
    int i, j, ok;
-
+   printf("******************************************\nSEQ:\n");
+   // print_matrix(SEQ);
+   printf("******************************************\nBENCH:\n"); 
+   // print_matrix(BENCH);
    bots_message("Output size: %d\n", bots_arg_size);
    for (i = 0; i < bots_arg_size; i += 50)
    {
       for (j = 0; j < bots_arg_size; j += 40)
       {
          ok = checkmat1(BENCH[i * bots_arg_size + j]);
+         if(!ok){
+            bots_message("BENCH[%d][%d] == NULL is %d\n",i,j,BENCH[i * bots_arg_size + j]==NULL);
+         }
       }
    }
    return BOTS_RESULT_SUCCESSFUL;

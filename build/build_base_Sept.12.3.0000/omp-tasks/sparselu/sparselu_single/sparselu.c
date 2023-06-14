@@ -251,6 +251,7 @@ void sparselu_par_call(float **BENCH)
 
       #pragma omp taskwait
    }
+   printf("并行计算结束\n");
    bots_message(" completed!\n");
 }
 

@@ -1,0 +1,8 @@
+
+botsspar:3514254 terminated with signal 11 at PC=55bdb766ac5b SP=7ffd028c27f0.  Backtrace:
+/home/parallel/122033910188/spec-botsspar/src/botsspar(+0x6c5b)[0x55bdb766ac5b]
+/home/parallel/122033910188/spec-botsspar/src/botsspar(+0x6d3c)[0x55bdb766ad3c]
+/home/parallel/122033910188/spec-botsspar/src/botsspar(+0x3074)[0x55bdb7667074]
+/lib/x86_64-linux-gnu/libc.so.6(+0x29d90)[0x7fed69d84d90]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80)[0x7fed69d84e40]
+/home/parallel/122033910188/spec-botsspar/src/botsspar(+0x2505)[0x55bdb7666505]

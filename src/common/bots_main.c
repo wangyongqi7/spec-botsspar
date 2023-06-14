@@ -594,20 +594,22 @@ int main(int argc, char *argv[])
    bots_t_end = bots_usecs();
    bots_time_program = ((double)(bots_t_end - bots_t_start)) / 1000000;
 #endif
-   if(myid!=0){
-      MPI_Finalize();
-      return 0;
+   MPI_Barrier(MPI_COMM_WORLD);
+   if(myid==0){
+      printf("同步结束\n");
    }
    KERNEL_FINI;
-
-#ifdef KERNEL_CHECK
+if(myid==0){
+   #ifdef KERNEL_CHECK
    /* spec, for call to check routine    if (bots_check_flag) { */
       bots_result = KERNEL_CHECK;
-/* spec  }  */
-#endif
+   /* spec  }  */
+   #endif
 
-   BOTS_APP_FINI;
-   bots_print_results();
+      BOTS_APP_FINI;
+      bots_print_results();
+}
+
    MPI_Finalize();
    
    return (0);
