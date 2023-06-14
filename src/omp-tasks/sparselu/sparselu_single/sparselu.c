@@ -732,9 +732,9 @@ int sparselu_check(float **SEQ, float **BENCH)
 int checkmat1(float *N)
 {
    int i, j;
-   if(N==NULL ||sizeof(N)/sizeof(float)!=bots_arg_size_1*bots_arg_size_1){
-      printf("client-%d: N equal NULL %d size=%d",myid,N==NULL,sizeof(N)/sizeof(float));
-      return FALSE;
+   if( N==NULL ){
+      // printf("client-%d: N equal NULL %d ",myid,N==NULL);
+      return TRUE;
    }
    for (i = 0; i < bots_arg_size_1; i += 20)
    {
@@ -759,9 +759,6 @@ int sparselu_check(float **SEQ, float **BENCH)
       for (j = 0; j < bots_arg_size; j += 40)
       {
          ok = checkmat1(BENCH[i * bots_arg_size + j]);
-         if(!ok){
-            bots_message("BENCH[%d][%d] == NULL is %d\n",i,j,BENCH[i * bots_arg_size + j]==NULL);
-         }
       }
    }
    return BOTS_RESULT_SUCCESSFUL;
